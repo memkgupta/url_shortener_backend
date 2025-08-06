@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Socket.IO Client</title>
+    <script src="https://cdn.socket.io/4.8.1/socket.io.min.js" integrity="sha384-mkQ3/7FUtcGyoppY6bz/PORYoGqOl7/aSUMn2ymDOJcapfS6PHqxhRTMh1RR0Q6+" crossorigin="anonymous"></script>
+</head>
+<body>
+    <h1>Socket.IO Client</h1>
+    <input id="messageInput" type="text" placeholder="Type a message">
+    <button id="sendButton">Send</button>
+    <ul id="messages"></ul>
+
+    <script>
+        // Connect to the Socket.IO server
+        const socket = io('http://localhost:8000'); // Replace with your server URL
+
+        // Handle incoming messages
+        socket.on('update', (msg) => {
+            console.log("update", msg);
+            const messagesList = document.getElementById('messages');
+            const newMessage = document.createElement('li');
+            newMessage.textContent = JSON.stringify(msg, null, 2); 
+            
+            messagesList.appendChild(newMessage);
+        });
+
+        // Send a message to the server
+        document.getElementById('sendButton').addEventListener('click', () => {
+            const messageInput = document.getElementById('messageInput');
+            const message = messageInput.value;
+            socket.emit('join', message);
+            messageInput.value = '';
+        });
+    </script>
+</body>
+</html>

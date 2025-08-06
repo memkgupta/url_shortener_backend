@@ -1,0 +1,61 @@
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka  # URL of the Eureka Server
+    registerWithEureka: true  # Register this service with Eureka
+    fetchRegistry: true  # Fetch registry info from Eureka
+  instance:
+    prefer-ip-address: true
+    instance-id: ${HOSTNAME:localhost}:9010
+spring:
+  application:
+    name: api_gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+
+
+      routes:
+        - id: shortner-redirect
+          uri: lb://shortner
+          filters:
+            - RewritePath=/s/(?<segment>.*), /s/$\{segment}
+          predicates:
+            - Path=/s/**
+        - id: url-api
+          uri: lb://shortner
+          filters:
+            - AuthenticationFilter
+            - ApiResponseTransformFilter
+            - RewritePath=/api/v1/(?<segment>.*), /v1/$\{segment}
+          predicates:
+            - Path=/api/v1/url/**
+        - id: shortener-api
+          uri: lb://shortner
+          filters:
+            - AuthenticationFilter
+            - ApiResponseTransformFilter
+            - RewritePath=/api/v1/(?<segment>.*), /v1/$\{segment}
+          predicates:
+            - Path=/api/v1/shortener/**
+
+        - id: user-service
+          uri: lb://user-service
+          filters:
+            - AuthenticationFilter
+            - ApiResponseTransformFilter
+            - RewritePath=/api/v1/user/(?<segment>.*), /v1/$\{segment}
+          predicates:
+            - Path=/api/v1/user/**
+        - id: analytics-service
+          uri: lb://analytics-service
+          filters:
+            - AuthenticationFilter
+            - ApiResponseTransformFilter
+            - RewritePath=/api/v1/analytics/(?<segment>.*), /v1/$\{segment}
+          predicates:
+            - Path=/api/v1/analytics/**
+server:
+  port: 8001
