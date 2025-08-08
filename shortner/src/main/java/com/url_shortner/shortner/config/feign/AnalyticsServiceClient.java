@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.sql.Timestamp;
 
-@FeignClient(name = "analytics-service",url = "http://localhost:9009/v1")
+@FeignClient(name = "analytics-service")
 public interface AnalyticsServiceClient {
 
-    @GetMapping("/{id}")
-   ResponseEntity<DashboardPayload> getDashboard(@PathVariable("id") String id, @RequestHeader("Authorisation") String authorisation , @RequestParam(name = "startTime") Timestamp startTime, @RequestParam(name = "endTime") Timestamp endTime);
+    @GetMapping("/v1/{id}")
+    ResponseEntity<DashboardPayload> getDashboard(@PathVariable("id") String id, @RequestHeader("Authorisation") String authorisation, @RequestParam(name = "startTime") Timestamp startTime, @RequestParam(name = "endTime") Timestamp endTime);
 }

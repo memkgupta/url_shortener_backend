@@ -1,12 +1,12 @@
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka  # URL of the Eureka Server
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka}  # URL of the Eureka Server
     registerWithEureka: true  # Register this service with Eureka
     fetchRegistry: true  # Fetch registry info from Eureka
   instance:
     prefer-ip-address: true
-    instance-id: ${HOSTNAME:localhost}:9010
+    instance-id: ${HOSTNAME:localhost}:${PORT:8001}
 spring:
   application:
     name: api_gateway
@@ -57,5 +57,9 @@ spring:
             - RewritePath=/api/v1/analytics/(?<segment>.*), /v1/$\{segment}
           predicates:
             - Path=/api/v1/analytics/**
+
+application:
+  properties:
+    frontend_host: ${FRONTEND_HOST:http://localhost:3000}
 server:
   port: 8001

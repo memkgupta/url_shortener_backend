@@ -1,5 +1,6 @@
 package org.url_shortener_mp.analytics_service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +26,10 @@ public class Controller {
 
     private final AnalyticService analyticService;
     private final URLClient urlServiceClient;
+    @Value("${application.custom.service_auth_token}")
+    private String serviceAuthToken;
+    @Value("${application.custom.service_auth_verification_token}")
+    private String serviceVerificationToken;
 
     public Controller(AnalyticService analyticService, URLClient urlServiceClient) {
         this.analyticService = analyticService;
@@ -34,14 +39,14 @@ public class Controller {
     @GetMapping("/metric/clicks-over-time")
     public ResponseEntity<ClicksOverTime> getClicks(@RequestParam Map<String, String> allParams, @RequestHeader("X-USER-ID") String userId) {
         urlServiceClient.verifyOwner(userId,
-                allParams.get("urlId"), "Bearer SERVICE_AUTH");
+                allParams.get("urlId"), serviceAuthToken);
         return ResponseEntity.ok(analyticService.getCLicksOverTime(MetricUtils.extractParamerters(allParams)));
     }
 
     @GetMapping("/metric/hourly-pattern")
     public ResponseEntity<HourlyPattern> getHourlyClicks(@RequestParam Map<String, String> allParams, @RequestHeader("X-USER-ID") String userId) {
         urlServiceClient.verifyOwner(userId,
-                allParams.get("urlId"), "Bearer SERVICE_AUTH");
+                allParams.get("urlId"), serviceAuthToken);
         List<HourlyClick> pattern = analyticService.getHourlyClicks(MetricUtils.extractParamerters(allParams));
         HourlyPattern res = new HourlyPattern();
         res.setPattern(pattern);
@@ -72,12 +77,10 @@ public class Controller {
     // service call only hence this will be always authorised
     @GetMapping("/{id}")
     public ResponseEntity<?> getOverview(@PathVariable String id, @RequestHeader("Authorisation") String authorisation, @RequestParam(name = "startTime") Timestamp startTime, @RequestParam(name = "endTime") Timestamp endTime) {
-        if (!authorisation.equals("Bearer SERVICE_AUTH")) {
+        if (!authorisation.equals(serviceVerificationToken)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         DashboardPayload payload = analyticService.getOverview(id, startTime, endTime);
-        System.out.println("**************************************");
-        System.out.println(payload);
         return ResponseEntity.ok(payload);
     }
 }

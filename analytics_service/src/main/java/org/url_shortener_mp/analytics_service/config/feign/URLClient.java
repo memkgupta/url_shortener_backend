@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@FeignClient(name = "shortener-service", url = "http://localhost:9010/v1")
+@FeignClient(name = "shortner")
 public interface URLClient {
-    @GetMapping("/authorisation/authorise")
+    @GetMapping("/v1/authorisation/authorise")
     ResponseEntity<?> verifyOwner(@RequestParam String userId, @RequestParam String urlId, @RequestHeader("Authorization") String auth);
 }

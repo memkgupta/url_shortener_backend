@@ -11,16 +11,16 @@ public class URLClickEventSerializerDeserializer implements Serde<URLClickEventD
     @Override
     public Serializer<URLClickEventDTO> serializer() {
         return new Serializer<URLClickEventDTO>() {
-ObjectMapper objectMapper = new ObjectMapper();
+            final ObjectMapper objectMapper = new ObjectMapper();
+
             @Override
             public byte[] serialize(String s, URLClickEventDTO urlClickEventDTO) {
-           try {
-               return objectMapper.writeValueAsBytes(urlClickEventDTO);
-           }
-           catch (Exception e) {
-               e.printStackTrace();
-               throw new RuntimeException(e);
-           }
+                try {
+                    return objectMapper.writeValueAsBytes(urlClickEventDTO);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    throw new RuntimeException(e);
+                }
             }
         };
     }

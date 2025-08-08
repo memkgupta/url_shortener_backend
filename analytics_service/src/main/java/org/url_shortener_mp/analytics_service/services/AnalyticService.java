@@ -39,7 +39,7 @@ public class AnalyticService {
 
     public void writeLog(WindowedAnalytic window) {
         try {
-            System.out.println(window);
+
             Entry entry = new Entry();
             entry.setClicks(window.getTotalClicks());
             entry.setEndTime(

@@ -114,10 +114,10 @@ public class KafkaStreamsConfig {
                 }).toTable();
 
         clickCounts.toStream().foreach((k, c) -> {
-            String key = k.key();
-            System.out.println(c);
-            producer.send(c);
-            analyticService.writeLog(c);
+//            String key = k.key(); // key is not needed as such because i don't want the ordering as such
+
+            producer.send(c); // sending the window to store the total clicks in my db ( in order to reduce the load of multiple analytics service api calls)
+            analyticService.writeLog(c); // persisting the aggregated window in timeseries db
         });
 
         return kStream;

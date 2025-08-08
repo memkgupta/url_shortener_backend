@@ -15,18 +15,11 @@ import java.util.Map;
 @Component
 public class ApiResponseTransformFilter extends AbstractGatewayFilterFactory<ApiResponseTransformFilter.Config> {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public ApiResponseTransformFilter() {
         super(Config.class);
     }
 
-    private APIResponse transform(Map<String, Object> object, Config config) {
-        APIResponse apiResponse = new APIResponse();
-        apiResponse.setData(object);
-        apiResponse.setSuccess(true);
-        return apiResponse;
-    }
 
     @Override
     public GatewayFilter apply(Config config) {
@@ -34,11 +27,7 @@ public class ApiResponseTransformFilter extends AbstractGatewayFilterFactory<Api
             ServerHttpResponse originalResponse = exchange.getResponse();
 
 
-
-
-                       return chain.filter(exchange.mutate().response(new DecoratorImpl(originalResponse)).build());
-
-
+            return chain.filter(exchange.mutate().response(new DecoratorImpl(originalResponse)).build());
 
 
         }, NettyWriteResponseFilter.WRITE_RESPONSE_FILTER_ORDER - 1);
