@@ -1,15 +1,16 @@
 {
   "name": "analytics_consumer_and_dashboard",
   "version": "1.0.0",
-  "description": "",
+  "description": "Analytics consumer and dashboard service",
   "main": "index.js",
   "type": "module",
   "scripts": {
     "dev": "nodemon index.js",
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["analytics", "dashboard", "kafka", "express"],
+  "author": "Your Name",
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",

@@ -13,7 +13,9 @@ public class RouteValidator {
             "/api/v1/user/auth/signup",
             "/api/v1/user/auth/login",
             "/api/v1/user/token/refresh-token",
-
+            "/analytics-service/v3/api-docs",
+            "/user-service/v3/api-docs",
+            "/shortener-service/v3/api-docs",
             "/eureka"
     );
 

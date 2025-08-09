@@ -26,20 +26,21 @@ import java.util.Arrays;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-private final CustomUserDetailsService userDetailsService;
+    private final CustomUserDetailsService userDetailsService;
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http,APIkeyAuthFilter apiKeyAuthFilter,JWTFilter jwtFilter) throws Exception {
+    SecurityFilterChain securityFilterChain(HttpSecurity http, APIkeyAuthFilter apiKeyAuthFilter, JWTFilter jwtFilter) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(authorise->authorise.requestMatchers("/v1/auth/**","/v1/refresh-token","/v1/oauth/**").permitAll()
+                .authorizeHttpRequests(authorise -> authorise.requestMatchers("/v1/auth/**", "/v1/refresh-token", "/v1/oauth/**", "/user-service/v3/api-docs").permitAll()
                         .anyRequest().authenticated()
-                ).sessionManagement(s->s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                ).sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(apiKeyAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterAfter(jwtFilter, APIkeyAuthFilter.class);
         return http.build();
     }
+
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
@@ -47,10 +48,12 @@ private final CustomUserDetailsService userDetailsService;
         provider.setPasswordEncoder(passwordEncoder());
         return provider;
     }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();

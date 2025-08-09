@@ -39,7 +39,7 @@ spring:
             - ApiResponseTransformFilter
             - RewritePath=/api/v1/(?<segment>.*), /v1/$\{segment}
           predicates:
-            - Path=/api/v1/shortener/**
+            - Path=/api/v1/shortener/** , /shortener-service/v3/api-docs
 
         - id: user-service
           uri: lb://user-service
@@ -48,7 +48,7 @@ spring:
             - ApiResponseTransformFilter
             - RewritePath=/api/v1/user/(?<segment>.*), /v1/$\{segment}
           predicates:
-            - Path=/api/v1/user/**
+            - Path=/api/v1/user/** , /user-service/v3/api-docs
         - id: analytics-service
           uri: lb://analytics-service
           filters:
@@ -56,7 +56,37 @@ spring:
             - ApiResponseTransformFilter
             - RewritePath=/api/v1/analytics/(?<segment>.*), /v1/$\{segment}
           predicates:
-            - Path=/api/v1/analytics/**
+            - Path=/api/v1/analytics/** , /analytics-service/v3/api-docs
+
+        - id: openapi
+          uri: lb://api-gateway
+          predicates:
+
+            - Path=/*/v3/api-docs
+          filters:
+            # Rewrites /<service-name>/v3/api-docs to /v3/api-docs before forwarding
+            - RewritePath=/(?<path>.*)/v3/api-docs, /v3/api-docs
+springdoc:
+  api-docs:
+    enabled: true
+    groups:
+      enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    config-url: /v3/api-docs/swagger-config
+    urls:
+      - url: /v3/api-docs
+        name: API Gateway Service
+      - url: /analytics-service/v3/api-docs
+        name: Analytics Service
+      - url: /user-service/v3/api-docs
+        name: User Service
+      - url: /shortener-service/v3/api-docs
+        name: Shortener Service
+
+
+
 
 application:
   properties:

@@ -2,7 +2,7 @@ import { Kafka } from "kafkajs"
 import pubsub from "./pubsub.js"
 const kafka = new Kafka({
   clientId: 'analytics_window_consumer',
-  brokers: ['localhost:29092',]
+  brokers: process.env.KAFKA_SERVER_URLS.split(",").map(url=>url.trim())
 })
 
 
@@ -17,11 +17,7 @@ const runConsumer = async () => {
 
   await consumer.run({
     eachMessage: async ({ topic, partition, message }) => {
-      // console.log({
-      //   partition,
-      //   offset: message.offset,
-      //   value: message.value.toString(),
-      // })
+
       pubsub.emit("window_in",JSON.parse(message.value.toString()))
     },
   })

@@ -22,6 +22,7 @@ import java.util.Map;
 public class DecoratorImpl extends ServerHttpResponseDecorator {
     MediaType contentType;
     private final ObjectMapper objectMapper = new ObjectMapper();
+
     public DecoratorImpl(ServerHttpResponse delegate) {
 
         super(delegate);
@@ -30,18 +31,18 @@ public class DecoratorImpl extends ServerHttpResponseDecorator {
             this.contentType = MediaType.APPLICATION_JSON;
         }
     }
+
     private APIResponse transform(Map<String, Object> object) {
         APIResponse apiResponse = new APIResponse();
         apiResponse.setData(object);
         apiResponse.setSuccess(true);
         return apiResponse;
     }
+
     DataBufferFactory bufferFactory = getDelegate().bufferFactory();
+
     @Override
     public Mono<Void> writeWith(Publisher<? extends DataBuffer> body) {
-
-
-
 
 
         // ✅ Ensure Content-Type remains intact
@@ -49,10 +50,11 @@ public class DecoratorImpl extends ServerHttpResponseDecorator {
         Flux<? extends DataBuffer> fluxBody = Flux.from(body);
         HttpStatusCode statusCode = getStatusCode();
         HttpStatus status = HttpStatus.valueOf(statusCode.value());
+
         if (status.is3xxRedirection()) {
             return super.writeWith(body);  // Don't transform redirects
         }
-        if(!contentType.equals(MediaType.APPLICATION_JSON)) {
+        if (!contentType.equals(MediaType.APPLICATION_JSON)) {
             return super.writeWith(body);
         }
 
@@ -67,16 +69,14 @@ public class DecoratorImpl extends ServerHttpResponseDecorator {
                     Map<String, Object> mapBody = JsonUtil.toMap(responseBody);
                     APIResponse apiResponse;
 
-                    if(statusCode!=null && statusCode.is4xxClientError())
-                    {
+                    if (statusCode != null && statusCode.is4xxClientError()) {
                         apiResponse = new APIResponse();
                         apiResponse.setSuccess(false);
                         apiResponse.setCode(statusCode.value());
-                        apiResponse.setError(status.getReasonPhrase() );
+                        apiResponse.setError(status.getReasonPhrase());
                         apiResponse.setMessage(responseBody);
-                        apiResponse.setMessage(mapBody.getOrDefault("message","Some error occurred").toString());
-                    }
-                    else{
+                        apiResponse.setMessage(mapBody.getOrDefault("message", "Some error occurred").toString());
+                    } else {
                         apiResponse = transform(mapBody);
                     }
                     try {

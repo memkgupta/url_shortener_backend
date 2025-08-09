@@ -28,7 +28,7 @@ services:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka:9092
+      KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka:9092,OUTSIDE://localhost:29092
       KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     depends_on:
@@ -166,7 +166,7 @@ services:
       kafka:
         condition: service_healthy
     environment:
-      - MONGO_URI=GET_YOUR_URL
+      - MONGO_URI=GET_YOUR_OWN
       - KAFKA_SERVER_URL=kafka:9092
       - KAFKA_SERVER_STREAM_URL=kafka:9092
       - SERVICE_AUTH_TOKEN=Bearer SERVICE_AUTH
@@ -178,6 +178,20 @@ services:
       - PORT=9009
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
 
+    networks:
+      - app-net
+
+  live_update_server:
+    build:
+      context: analytics_consumer_and_dashboard
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    depends_on:
+      kafka:
+        condition: service_healthy
+    environment:
+      - KAFKA_SERVER_URLS=kafka:9092
     networks:
       - app-net
 

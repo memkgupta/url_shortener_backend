@@ -1,4 +1,4 @@
-package com.url_shortner.user_service.config;
+package org.url_shortener_mp.analytics_service.config;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -7,18 +7,12 @@ import io.swagger.v3.oas.models.servers.Server;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
-@Configuration
 @OpenAPIDefinition
-public class GlobalConfig {
-    @Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
-    }
-
+@Configuration
+public class OpenAPIConfig {
     @Bean
     public OpenAPI userOpenAPI(
             @Value("${openapi.service.title}") String serviceTitle,

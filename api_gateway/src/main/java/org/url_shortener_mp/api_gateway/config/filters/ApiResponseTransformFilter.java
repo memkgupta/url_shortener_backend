@@ -26,7 +26,7 @@ public class ApiResponseTransformFilter extends AbstractGatewayFilterFactory<Api
         return new OrderedGatewayFilter((exchange, chain) -> {
             ServerHttpResponse originalResponse = exchange.getResponse();
 
-
+            if (!exchange.getRequest().getPath().toString().startsWith("/api")) return chain.filter(exchange);
             return chain.filter(exchange.mutate().response(new DecoratorImpl(originalResponse)).build());
 
 
